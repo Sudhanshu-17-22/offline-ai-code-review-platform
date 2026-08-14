@@ -1,18 +1,10 @@
-import express, { Application, Request, Response } from "express";
-import cors from "cors";
+import express from 'express';
+import healthRoute from './routes/health.route';
 
-const app: Application = express();
+const app = express();
 
-// Middlewares
-app.use(cors());
 app.use(express.json());
 
-// Health check route (confirms server is alive)
-app.get("/api/health", (req: Request, res: Response) => {
-  res.status(200).json({
-    success: true,
-    message: "Server is running fine 🚀",
-  });
-});
+app.use('/api/health', healthRoute);
 
 export default app;
