@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
     "@monaco-editor/react": "^4.7.0",
     "axios": "^1.19.0",
     "framer-motion": "^13.1.0",

@@ -42,3 +42,29 @@ export interface ApiResponse<T> {
   message: string;
   data?: T;
 }
+
+
+//  Authentication Types 
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface RegisterFormData {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  user: AuthUser;
+  token: string;
+}
+
