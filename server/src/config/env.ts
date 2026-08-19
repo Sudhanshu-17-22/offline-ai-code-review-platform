@@ -8,6 +8,8 @@ interface EnvConfig {
   CLIENT_URL: string;
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
+  OLLAMA_BASE_URL: string;
+  OLLAMA_MODEL: string;
 }
 
 function getEnvVar(key: string): string {
@@ -25,5 +27,7 @@ export const env: EnvConfig = {
   CLIENT_URL: getEnvVar('CLIENT_URL'),
   JWT_SECRET: getEnvVar("JWT_SECRET"),
   JWT_EXPIRES_IN: getEnvVar("JWT_EXPIRES_IN"),
+  OLLAMA_BASE_URL: getEnvVar("OLLAMA_BASE_URL"),
+  OLLAMA_MODEL: getEnvVar("OLLAMA_MODEL"),
 };
 

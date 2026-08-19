@@ -7,13 +7,15 @@
     "dev": "tsx watch -r tsconfig-paths/register src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test:models": "tsx -r tsconfig-paths/register src/scripts/test.model.ts"
+    "test:models": "tsx -r tsconfig-paths/register src/scripts/test.model.ts",
+    "test:ai": "tsx -r tsconfig-paths/register src/scripts/test.ai.review.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "axios": "^1.19.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
