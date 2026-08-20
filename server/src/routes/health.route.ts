@@ -1,7 +1,10 @@
+import { checkAiHealth } from '@/controllers/health.controller';
 import { Router } from 'express';
 import mongoose from 'mongoose';
 
 const router = Router();
+
+router.get("/ai", checkAiHealth);
 
 router.get('/', (_req, res) => {
   const dbStatus =
