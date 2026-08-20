@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { AuthStore } from "@/store/auth.store";
 import { useAuth } from "@/hooks/use.auth";
 import Button from "@/components/ui/Button";
@@ -22,9 +24,14 @@ export default function DashboardPage() {
 
       <div className="p-8 rounded-xl bg-background-card border border-border text-center">
         <p className="text-gray-400">
-          🚧 Full dashboard with stats, recent reviews, and the code editor
-          will be built on Day 7 & Day 11.
+          Ready to review some code? Start a new AI-powered review below.
         </p>
+        <Link href="/review">
+          <Button variant="primary" className="mx-auto">
+            <Plus className="w-4 h-4" />
+            New Review
+          </Button>
+        </Link>
       </div>
     </div>
   );
