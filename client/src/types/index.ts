@@ -68,3 +68,32 @@ export interface AuthResponse {
   token: string;
 }
 
+
+export type ReviewStatus = "pending" | "processing" | "completed" | "failed";
+export interface AiAnalysisResult {
+  summary: string;
+  overallScore: number;
+  issues: CodeIssue[];
+}
+
+export interface ReviewData {
+  _id: string;
+  userId: string;
+  title: string;
+  code: string;
+  language: SupportedLanguage;
+  fileName?: string;
+  aiAnalysis?: AiAnalysisResult;
+  status: ReviewStatus;
+  executionTimeMs?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaginationData {
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+

@@ -9,6 +9,7 @@ import Tabs from "@/components/ui/tabs";
 import Button from "@/components/ui/Button";
 import ProtectedRoute from "@/components/auth/protected.route";
 import { SupportedLanguage } from "@/types";
+import { useReview } from "@/hooks/use.review";
 import toast from "react-hot-toast";
 
 const PLACEHOLDER_CODE = `function calculateTotal(items) {
@@ -24,8 +25,8 @@ function ReviewPageContent() {
     const [code, setCode] = useState(PLACEHOLDER_CODE);
     const [language, setLanguage] = useState<SupportedLanguage>("javascript");
     const [fileName, setFileName] = useState<string>("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
+    const { isSubmitting } = useReview();
+    
     const handleFileLoaded = (
         content: string,
         detectedLanguage: SupportedLanguage,
@@ -41,9 +42,10 @@ function ReviewPageContent() {
             toast.error("Please add some code before submitting");
             return;
         }
-        setIsSubmitting(true);
-        toast("Review submission will be connected on Day 8 🚧", { icon: "🔧" });
-        setIsSubmitting(false);
+
+        toast("Review submission will be connected on Day 8 🚧", {
+            icon: "🔧",
+        });
     };
 
     return (
