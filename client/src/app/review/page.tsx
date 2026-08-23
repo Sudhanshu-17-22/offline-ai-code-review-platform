@@ -25,8 +25,8 @@ function ReviewPageContent() {
     const [code, setCode] = useState(PLACEHOLDER_CODE);
     const [language, setLanguage] = useState<SupportedLanguage>("javascript");
     const [fileName, setFileName] = useState<string>("");
-    const { isSubmitting } = useReview();
-    
+    const { submitReview, isSubmitting } = useReview();
+
     const handleFileLoaded = (
         content: string,
         detectedLanguage: SupportedLanguage,
@@ -42,10 +42,18 @@ function ReviewPageContent() {
             toast.error("Please add some code before submitting");
             return;
         }
-
-        toast("Review submission will be connected on Day 8 🚧", {
-            icon: "🔧",
-        });
+        try {
+            await submitReview({
+                code,
+                language,
+                fileName: fileName || undefined,
+            });
+            toast.success("Code review submitted successfully!");
+        } 
+        catch (error) {
+            console.error("Review submission failed:", error);
+            toast.error("Failed to submit code review");
+        }
     };
 
     return (

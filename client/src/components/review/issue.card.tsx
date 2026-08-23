@@ -31,7 +31,7 @@ export default function IssueCard({ issue, index }: IssueCardProps) {
         <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
           <Lightbulb className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
           <p className="text-sm text-gray-300">
-            <span className="text-primary font-medium">Suggestion: </span>
+            <span className="text-primary font-medium">Suggestion:{" "} </span>
             {issue.suggestion}
           </p>
         </div>

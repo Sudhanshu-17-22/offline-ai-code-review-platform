@@ -76,6 +76,11 @@ export interface AiAnalysisResult {
   issues: CodeIssue[];
 }
 
+export interface StaticAnalysisResult {
+  findings: StaticFinding[];
+  metrics: CodeMetrics;
+  score: number;
+}
 export interface ReviewData {
   _id: string;
   userId: string;
@@ -84,6 +89,7 @@ export interface ReviewData {
   language: SupportedLanguage;
   fileName?: string;
   aiAnalysis?: AiAnalysisResult;
+  staticAnalysis?: StaticAnalysisResult;
   status: ReviewStatus;
   executionTimeMs?: number;
   createdAt: string;
@@ -94,6 +100,63 @@ export interface PaginationData {
   total: number;
   page: number;
   totalPages: number;
+}
+
+
+export interface CodeMetrics {
+  cyclomaticComplexity: number;
+  linesOfCode: number;
+  nestingDepth: number;
+  functions: {
+    name: string;
+    complexity: number;
+    lines: number;
+  }[];
+  duplicatePatterns: string[];
+}
+
+export interface StaticFinding {
+  type: "eslint" | "complexity" | "security" | "dead-code";
+  severity: "error" | "warning" | "info";
+  rule: string;
+  message: string;
+  line: number;
+  column: number;
+  fix?: {
+    range: [number, number];
+    text: string;
+  };
+}
+
+export interface CodeMetrics {
+  cyclomaticComplexity: number;
+  linesOfCode: number;
+  nestingDepth: number;
+  functions: {
+    name: string;
+    complexity: number;
+    lines: number;
+  }[];
+  duplicatePatterns: string[];
+}
+
+export interface StaticFinding {
+  type: "eslint" | "complexity" | "security" | "dead-code";
+  severity: "error" | "warning" | "info";
+  rule: string;
+  message: string;
+  line: number;
+  column: number;
+  fix?: {
+    range: [number, number];
+    text: string;
+  };
+}
+
+export interface StaticAnalysisResult {
+  findings: StaticFinding[];
+  metrics: CodeMetrics;
+  score: number;
 }
 
 

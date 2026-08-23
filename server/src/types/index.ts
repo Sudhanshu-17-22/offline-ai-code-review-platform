@@ -86,3 +86,36 @@ export interface IProject extends Document {
   updatedAt: Date;
 }
 
+
+// Static Analysis Types
+export interface StaticFinding {
+  type: "eslint" | "complexity" | "security" | "dead-code";
+  severity: "error" | "warning" | "info";
+  rule: string;
+  message: string;
+  line: number;
+  column: number;
+  fix?: {
+    range: [number, number];
+    text: string;
+  };
+}
+
+export interface CodeMetrics {
+  cyclomaticComplexity: number;
+  linesOfCode: number;
+  nestingDepth: number;
+  functions: {
+    name: string;
+    complexity: number;
+    lines: number;
+  }[];
+  duplicatePatterns: string[];
+}
+export interface StaticAnalysisResult {
+  findings: StaticFinding[];
+  metrics: CodeMetrics;
+  score: number; // 0-100, lower = more issues
+}
+
+
