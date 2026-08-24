@@ -36,8 +36,6 @@ app.get("/api/health", (req: Request, res: Response) => {
 
 app.use("/api/auth", authRoutes); 
 app.use("/api/health", healthRoute);
-app.use("/api/auth", authRoutes);
-app.use("/api/health", healthRoute);
 app.use("/api/reviews", reviewRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
