@@ -2,28 +2,29 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { fetchReviewById } from "@/libraries/api";
-import ReviewResult from "@/components/review/ReviewResult";
+import fetchReviewById from "@/libraries/api";
+import type { ReviewData } from "@/types";
+import ReviewResult from "@/components/review/review.result";
 import StaticIssueCard from "@/components/review/static.issue.card";
 import CodeMetricsPanel from "@/components/review/code.metrics.panel";
 import Loader from "@/components/ui/Loader";
 
 export default function ReviewPage() {
     const params = useParams();
-    const [review, setReview] = useState<any>(null);
+    const [review, setReview] = useState<ReviewData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     useEffect(() => {
         const loadReview = async () => {
-        try {
-            const data = await fetchReviewById(params.id as string);
-            setReview(data);
-        } catch (err) {
-            setError("Failed to load review");
-        } finally {
-            setLoading(false);
-        }
+            try {
+                const data = await fetchReviewById(params.id as string);
+                setReview(data.data);
+            } catch {
+                setError("Failed to load review");
+            } finally {
+                setLoading(false);
+            }
         };
 
         loadReview();
@@ -31,6 +32,10 @@ export default function ReviewPage() {
 
     if (loading) return <Loader />;
     if (error) return <div className="text-red-500">{error}</div>;
+    if (!review) {
+        return <div className="text-red-500">Review not found</div>;
+    }
+
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
@@ -39,7 +44,7 @@ export default function ReviewPage() {
             <div className="mb-8">
             <h1 className="text-4xl font-bold text-white mb-2">Code Review</h1>
             <p className="text-slate-400">
-                {review.fileName} • {review.language}
+               {review.language}
             </p>
             </div>
 
@@ -49,13 +54,13 @@ export default function ReviewPage() {
                 <div>
                 <p className="text-slate-300 text-lg mb-2">Overall Score</p>
                 <p className="text-5xl font-bold text-green-400">
-                    {review.overallScore}/100
+                    {review.aiAnalysis?.overallScore ?? 0}/100
                 </p>
                 </div>
                 <div className="text-right">
-                <p className="text-slate-300">AI Score: 75</p>
+                <p className="text-slate-300">AI Score: {review.aiAnalysis?.overallScore ?? 0} </p>
                 <p className="text-slate-300">
-                    Static Score: {review.staticAnalysis?.score || 0}
+                    Static Score: {review.staticAnalysis?.score ?? 0}
                 </p>
                 </div>
             </div>
@@ -65,7 +70,10 @@ export default function ReviewPage() {
             <div className="grid grid-cols-3 gap-6">
             {/* AI Findings */}
             <div className="col-span-2">
-                <ReviewResult aiFindings={review.aiFindings} />
+                <ReviewResult 
+                    aiFindings={JSON.stringify(review.aiAnalysis?.issues ?? [])} 
+                    overallScore={review.aiAnalysis?.overallScore ?? 0}
+                />
             </div>
 
             {/* Code Metrics */}
@@ -78,10 +86,10 @@ export default function ReviewPage() {
             {review.staticAnalysis?.findings && (
             <div className="mt-8">
                 <h2 className="text-2xl font-bold text-white mb-4">
-                Static Analysis ({review.staticAnalysis.findings.length} issues)
+                    Static Analysis ({review.staticAnalysis.findings.length} issues)
                 </h2>
                 <div className="space-y-3">
-                {review.staticAnalysis.findings.map((finding: any, idx: number) => (
+                {review.staticAnalysis.findings.map((finding, idx) => (
                     <StaticIssueCard key={idx} finding={finding} />
                 ))}
                 </div>
@@ -91,3 +99,5 @@ export default function ReviewPage() {
         </div>
     );
 }
+
+
