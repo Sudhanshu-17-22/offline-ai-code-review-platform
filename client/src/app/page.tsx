@@ -1,125 +1,96 @@
-import Link from "next/link";
-import { ShieldCheck, Zap, GitBranch, Cpu } from "lucide-react";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { AuthStore } from "@/store/auth.store";
+import { ArrowRight, Code, Zap, BarChart3 } from "lucide-react";
 import Button from "@/components/ui/Button";
 
-export default function HomePage() {
-  const features = [
-    {
-      icon: ShieldCheck,
-      title: "100% Offline & Private",
-      description:
-        "Your code never leaves your machine. AI review runs entirely locally via Ollama — no cloud, no data leaks.",
-    },
-    {
-      icon: Zap,
-      title: "Real-Time Streaming Analysis",
-      description:
-        "Watch AI review your code live, with instant feedback powered by WebSockets.",
-    },
-    {
-      icon: GitBranch,
-      title: "Static + AI Analysis Combined",
-      description:
-        "AST parsing and ESLint rules catch deterministic issues, while the LLM catches logic and design flaws.",
-    },
-    {
-      icon: Cpu,
-      title: "Multi-Language Support",
-      description:
-        "Deep analysis for JavaScript/TypeScript, with AI-powered review for Python, Java, C++, and more.",
-    },
-  ];
+export default function LandingPage() {
+  const router = useRouter();
+  const { isAuthenticated } = AuthStore();
 
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="max-w-5xl mx-auto text-center px-6 pt-24 pb-20 animate-fade-in">
-        <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6 border border-primary/20">
-          🔒 Privacy-First AI Code Review
-        </span>
-        <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-          Review Code with AI —{" "}
-          <span className="text-primary">Without Sending It Anywhere</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="max-w-7xl mx-auto px-6 py-20 text-center">
+        <h1 className="text-6xl md:text-7xl font-bold text-white mb-6">
+          AI-Powered Code
+          <br />
+          <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+            Review Platform
+          </span>
         </h1>
-        <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-10">
-          An offline AI-powered code review platform for developers and teams who
-          can&apos;t compromise on data privacy. Runs entirely on your machine — no API keys, no cloud, no cost.
+
+        <p className="text-xl text-slate-400 mb-8 max-w-2xl mx-auto">
+          Get instant, offline code reviews powered by local AI. No data leaves your
+          machine. Perfect for enterprise teams with strict compliance requirements.
         </p>
+
         <div className="flex items-center justify-center gap-4">
-          <Link href="/register">
-            <Button variant="primary" className="px-6 py-3 text-base">
-              Get Started Free
-            </Button>
-          </Link>
-          <Link href="/#how-it-works">
-            <Button variant="secondary" className="px-6 py-3 text-base">
-              See How It Works
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="max-w-6xl mx-auto px-6 py-20">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl font-bold mb-3">Why Offline AI Review?</h2>
-          <p className="text-gray-400">
-            Built for developers who need real AI assistance without compromising security.
-          </p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-6">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <div
-                key={index}
-                className="p-6 rounded-xl bg-background-card border border-border hover:border-primary/40 transition-colors animate-slide-up"
-              >
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <Icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="max-w-4xl mx-auto px-6 py-20 text-center">
-        <h2 className="text-3xl font-bold mb-14">How It Works</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          {[
-            { step: "01", title: "Paste or Upload Code", desc: "Drop your code into our Monaco-powered editor." },
-            { step: "02", title: "AI Analyzes Locally", desc: "A local LLM + static analyzer review your code offline." },
-            { step: "03", title: "Get Actionable Feedback", desc: "See issues, severity, and suggested fixes instantly." },
-          ].map((item, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary font-bold mb-4">
-                {item.step}
-              </div>
-              <h3 className="font-semibold mb-2">{item.title}</h3>
-              <p className="text-sm text-gray-400">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="max-w-3xl mx-auto text-center px-6 py-20">
-        <h2 className="text-3xl font-bold mb-4">Ready to Review Code Privately?</h2>
-        <p className="text-gray-400 mb-8">
-          No signup fees. No cloud dependency. Just better code, kept private.
-        </p>
-        <Link href="/register">
-          <Button variant="primary" className="px-8 py-3 text-base">
-            Start Reviewing Now
+          <Button
+            onClick={() =>
+              isAuthenticated ? router.push("/review") : router.push("/register")
+            }
+            size="lg"
+          >
+            <Zap className="w-5 h-5" />
+            {isAuthenticated ? "Start Reviewing" : "Get Started Free"}
           </Button>
-        </Link>
-      </section>
+
+          <button
+            onClick={() => router.push("/login")}
+            className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition-colors"
+          >
+            Sign In
+          </button>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="bg-slate-800/50 rounded-lg border border-slate-700 p-8">
+            <Code className="w-12 h-12 text-blue-400 mb-4" />
+            <h3 className="text-xl font-bold text-white mb-2">
+              Real-Time Streaming
+            </h3>
+            <p className="text-slate-400">
+              Watch AI analysis stream in real-time, just like ChatGPT. See results as
+              they&apos;re generated.
+            </p>
+          </div>
+
+          <div className="bg-slate-800/50 rounded-lg border border-slate-700 p-8">
+            <BarChart3 className="w-12 h-12 text-green-400 mb-4" />
+            <h3 className="text-xl font-bold text-white mb-2">
+              Comprehensive Analytics
+            </h3>
+            <p className="text-slate-400">
+              Track your code quality over time with detailed metrics, trends, and
+              insights.
+            </p>
+          </div>
+
+          <div className="bg-slate-800/50 rounded-lg border border-slate-700 p-8">
+            <Zap className="w-12 h-12 text-yellow-400 mb-4" />
+            <h3 className="text-xl font-bold text-white mb-2">100% Offline</h3>
+            <p className="text-slate-400">
+              All processing happens locally. Your code never leaves your machine.
+              Enterprise-grade privacy.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {isAuthenticated && (
+        <div className="max-w-7xl mx-auto px-6 py-12 text-center">
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+          >
+            View Your Dashboard
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
