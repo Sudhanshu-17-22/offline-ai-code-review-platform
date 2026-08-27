@@ -21,6 +21,9 @@ export const protect = asyncHandler(
     }
 
     const token = authHeader.split(" ")[1];
+    if (!token) {
+      throw new ApiError(401, "Not authorized. No token provided.");
+    }
 
     let decoded;
     try {

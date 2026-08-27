@@ -1,14 +1,17 @@
 import { ESLint } from "eslint";
-import tsParser from "@typescript-eslint/parser";
+import tseslint from "typescript-eslint";
 import astParserService from "./ast.parser.service";
 import { StaticAnalysisResult, StaticFinding, CodeMetrics } from "../types";
 
 const eslint = new ESLint({
     overrideConfigFile: true,
-    overrideConfig: {
+    overrideConfig: [{
         files: ["**/*.{js,jsx,ts,tsx}"],
+        plugins: {
+            "@typescript-eslint": tseslint.plugin,
+        },
         languageOptions: {
-            parser: tsParser,
+            parser: tseslint.parser,
             parserOptions: {
                 ecmaVersion: 2021,
                 sourceType: "module",
@@ -21,7 +24,7 @@ const eslint = new ESLint({
             },
         },
         rules: {
-            "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+            "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
             "no-console": ["warn"],
             "prefer-const": "warn",
             "eqeqeq": ["warn", "always"],
@@ -33,11 +36,10 @@ const eslint = new ESLint({
             "no-with": "error",
             "no-prototype-builtins": "warn",
 
-            // Security rules
             "@typescript-eslint/no-explicit-any": "warn",
             "@typescript-eslint/no-non-null-assertion": "warn",
         },
-    },
+    }],
 });
 
 class StaticAnalysisService {

@@ -8,6 +8,7 @@ import { ApiResponse } from "@/utils/ApiResponse";
 import authRoutes from "@/routes/auth.route"; 
 import healthRoute from "@/routes/health.route";
 import reviewRoutes from "@/routes/review.route";
+import analyticsRoutes from "./routes/analytics.routes";
 
 const app: Application = express();
 
@@ -37,6 +38,7 @@ app.get("/api/health", (req: Request, res: Response) => {
 app.use("/api/auth", authRoutes); 
 app.use("/api/health", healthRoute);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/analytics", analyticsRoutes);
 app.use(notFoundHandler);
 app.use(errorHandler);
 

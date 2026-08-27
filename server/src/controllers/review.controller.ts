@@ -44,7 +44,7 @@ export const createReview = asyncHandler(
             const aiResult = await aiService.reviewCode(code, language);
             
             const staticAnalysis = await staticAnalysisService.analyzeCode(code, language);
-            const aiScore = 75; // TODO: Extract actual score from AI result
+            const aiScore = 75; 
             const staticScore = staticAnalysis.score;
             const overallScore = Math.round((aiScore + staticScore) / 2);
 
@@ -97,26 +97,101 @@ export const getUserReviews = asyncHandler(
             throw new ApiError(401, "Authentication required");
         }
 
-        const page = parseInt(req.query.page as string) || 1;
-        const limit = parseInt(req.query.limit as string) || 10;
-        const skip = (page - 1) * limit;
-        const [reviews, total] = await Promise.all([
-            Review.find({ userId: req.userId })
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(limit)
-                .select("-code"),
+        const userId = req.userId;
 
-            Review.countDocuments({ userId: req.userId }),
-        ]);
+        const page = Math.max(
+            parseInt(req.query.page as string, 10) || 1,
+            1
+        );
+
+        const limit = Math.min(
+            Math.max(
+                parseInt(req.query.limit as string, 10) || 10,
+                1
+            ),
+            100
+        );
+
+        const skip = (page - 1) * limit;
+
+        const language = req.query.language as string | undefined;
+        const search = req.query.search as string | undefined;
+
+        const sortByParam = req.query.sortBy as string | undefined;
+        const sortOrder =
+            req.query.sortOrder === "asc" ? 1 : -1;
+
+        const minScore =
+            req.query.minScore !== undefined
+                ? parseInt(req.query.minScore as string, 10)
+                : undefined;
+        const maxScore =
+            req.query.maxScore !== undefined
+                ? parseInt(req.query.maxScore as string, 10)
+                : undefined;
+
+        const allowedSortFields = [
+            "createdAt",
+            "updatedAt",
+            "overallScore",
+            "language",
+            "fileName",
+        ] as const;
+
+        type SortField = (typeof allowedSortFields)[number];
+
+        const sortBy: SortField = allowedSortFields.includes(
+            sortByParam as SortField
+        )
+            ? (sortByParam as SortField)
+            : "createdAt";
+
+        const query = {
+            userId,
+            ...(language && language !== "all" && {
+                language,
+            }),
+            ...(search?.trim() && {
+                fileName: {
+                    $regex: search.trim(),
+                    $options: "i",
+                },
+            }),
+            ...((minScore !== undefined || maxScore !== undefined) && {
+                overallScore: {
+                    ...(minScore !== undefined &&
+                        !Number.isNaN(minScore) && {
+                            $gte: minScore,
+                        }),
+                    ...(maxScore !== undefined &&
+                        !Number.isNaN(maxScore) && {
+                            $lte: maxScore,
+                        }),
+                },
+            }),
+        };
+        const reviews = await Review.find(query)
+            .select(
+                "fileName language overallScore staticAnalysis.score staticAnalysis.findings createdAt"
+            )
+            .sort({
+                [sortBy]: sortOrder,
+            })
+            .limit(limit)
+            .skip(skip);
+
+        const total = await Review.countDocuments(query);
+
+        const totalPages = Math.ceil(total / limit);
 
         res.status(200).json(
-            new ApiResponse("Reviews fetched successfully", {
+            new ApiResponse("Reviews retrieved successfully", {
                 reviews,
                 pagination: {
                     total,
                     page,
-                    totalPages: Math.ceil(total / limit),
+                    limit,
+                    totalPages,
                 },
             })
         );

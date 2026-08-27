@@ -119,6 +119,12 @@ const reviewSchema = new Schema<IReview>(
       type: aiAnalysisSchema,
       default: undefined,
     },
+    overallScore: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
     status: {
       type: String,
       enum: Object.values(ReviewStatus),

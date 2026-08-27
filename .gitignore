@@ -25,5 +25,9 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 
-# Testing
+# Test coverage
 coverage/
+*.lcov
+
+# Test database
+.env.test

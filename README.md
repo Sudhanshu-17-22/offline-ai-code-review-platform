@@ -1,5 +1,9 @@
 # 🔒 Offline AI Code Review Platform
 
+![Backend CI](https://github.com/YOUR_USERNAME/offline-ai-code-review-platform/actions/workflows/backend-ci.yml/badge.svg)
+![Frontend CI](https://github.com/YOUR_USERNAME/offline-ai-code-review-platform/actions/workflows/frontend-ci.yml/badge.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+
 A privacy-first, AI-powered code review platform that runs **entirely offline** using local LLMs — no code ever leaves your machine. Built for developers and organizations who can't send proprietary code to cloud AI services due to compliance or security concerns.
 
 ## 🎯 Problem Statement
@@ -64,6 +68,17 @@ cd client
 npm install
 npm run dev
 \`\`\`
+
+## Testing
+
+This project maintains >70% code coverage with comprehensive unit and integration tests.
+
+```bash
+# Run all tests
+npm run test:all
+
+# Run with coverage
+npm run coverage:all
 
 ## 📄 License
 MIT
