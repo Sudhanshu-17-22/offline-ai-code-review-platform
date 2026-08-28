@@ -11,8 +11,8 @@
         "coverage:server": "cd server && npm run test:coverage",
         "coverage:client": "cd client && npm run test:coverage",
         "coverage:all": "npm run coverage:server && npm run coverage:client"
+    },
+    "dependencies": {
+        "express-rate-limit": "^8.6.2"
     }
 }
-
-
-

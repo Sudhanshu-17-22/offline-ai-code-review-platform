@@ -2,6 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+@supports not (backdrop-filter: blur(10px)) {
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+@supports (backdrop-filter: blur(10px)) {
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.7);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+*:focus { outline: none; } *:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -13,10 +46,6 @@
 ::-webkit-scrollbar-thumb {
   background: #4f46e5;
   border-radius: 4px;
-}
-
-* {
-  scroll-behavior: smooth;
 }
 
 body {

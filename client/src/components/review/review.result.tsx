@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { TrendingUp, CheckCircle, AlertCircle } from "lucide-react";
 
 interface ReviewResultProps {
@@ -7,7 +8,7 @@ interface ReviewResultProps {
     overallScore: number;
 }
 
-export default function ReviewResult({
+const ReviewResult = memo(function ReviewResult({
     aiFindings,
     overallScore,
 }: ReviewResultProps) {
@@ -79,7 +80,8 @@ export default function ReviewResult({
         </div>
         </div>
     );
-}
+});
+export default ReviewResult;
 
 
 

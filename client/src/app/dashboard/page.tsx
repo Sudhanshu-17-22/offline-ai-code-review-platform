@@ -1,23 +1,16 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Plus, FileCode, TrendingUp, AlertCircle, Activity } from "lucide-react";
 import { AuthStore } from "@/store/auth.store";
 import { useAuth } from "@/hooks/use.auth";
 import { Review } from "@/types";
 import StatsCard from "@/components/dashboard/stats.card";
 import RecentReviews from "@/components/dashboard/recent.reviews";
-import ScoreTrendChart from "@/components/dashboard/score.trend.chart";
-import LanguageDistributionChart from "@/components/dashboard/language.distribution.chart";
 import TopIssuesCard from "@/components/dashboard/top.issues.card";
 import Button from "@/components/ui/Button";
-import {
-  FileCode,
-  TrendingUp,
-  AlertCircle,
-  Activity,
-} from "lucide-react";
 import {
   fetchDashboardStats,
   fetchScoreTrend,
@@ -25,6 +18,26 @@ import {
   fetchTopIssues,
   fetchReviewHistory,
 } from "@/libraries/api";
+
+const ScoreTrendChart = dynamic(
+  () => import("@/components/dashboard/score.trend.chart"),
+  {
+    loading: () => (
+      <div className="h-64 bg-slate-800 rounded-lg animate-pulse" />
+    ),
+    ssr: false,
+  }
+);
+
+const LanguageDistributionChart = dynamic(
+  () => import("@/components/dashboard/language.distribution.chart"),
+  {
+    loading: () => (
+      <div className="h-64 bg-slate-800 rounded-lg animate-pulse" />
+    ),
+    ssr: false,
+  }
+);
 
 interface ScoreTrendPoint {
   date: string;
@@ -48,12 +61,12 @@ export default function DashboardPage() {
   const { logout } = useAuth();
   const router = useRouter();
 
-const [stats, setStats] = useState<Record<string, unknown> | null>(null);
-const [scoreTrend, setScoreTrend] = useState<ScoreTrendPoint[]>([]);
-const [languageData, setLanguageData] = useState<LanguageData[]>([]);
-const [topIssues, setTopIssues] = useState<TopIssue[]>([]);
-const [recentReviews, setRecentReviews] = useState<Partial<Review>[]>([]);
-const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<Record<string, unknown> | null>(null);
+  const [scoreTrend, setScoreTrend] = useState<ScoreTrendPoint[]>([]);
+  const [languageData, setLanguageData] = useState<LanguageData[]>([]);
+  const [topIssues, setTopIssues] = useState<TopIssue[]>([]);
+  const [recentReviews, setRecentReviews] = useState<Partial<Review>[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -92,7 +105,9 @@ const [loading, setLoading] = useState(true);
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Dashboard</h1>
+            <h1 className="text-4xl font-bold text-white mb-2">
+              Dashboard
+            </h1>
             <p className="text-slate-400">
               Track your code quality progress over time
             </p>
@@ -106,7 +121,10 @@ const [loading, setLoading] = useState(true);
               Logout
             </Button>
 
-            <Button onClick={() => router.push("/review")} size="lg">
+            <Button
+              onClick={() => router.push("/review")}
+              size="lg"
+            >
               <Plus className="w-5 h-5" />
               New Review
             </Button>
@@ -117,14 +135,16 @@ const [loading, setLoading] = useState(true);
           <h2 className="text-xl font-semibold text-white">
             Welcome, {user?.name} 👋
           </h2>
-          <p className="text-slate-400 text-sm mt-1">{user?.email}</p>
+          <p className="text-slate-400 text-sm mt-1">
+            {user?.email}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatsCard
             title="Total Reviews"
             value={loading ? "..." : Number(stats?.totalReviews ?? 0)}
-            icon={FileCode}
+            icon={<FileCode className="w-5 h-5" />}
             iconColor="text-blue-400"
           />
 
@@ -132,28 +152,36 @@ const [loading, setLoading] = useState(true);
             title="Average Score"
             value={loading ? "..." : Number(stats?.averageScore ?? 0)}
             suffix="/100"
-            icon={TrendingUp}
+            icon={<TrendingUp className="w-5 h-5" />}
             iconColor="text-green-400"
-            trend={typeof stats?.scoreImprovement === "number" ? stats.scoreImprovement : undefined}
+            trend={
+              typeof stats?.scoreImprovement === "number"
+                ? stats.scoreImprovement
+                : undefined
+            }
           />
 
           <StatsCard
             title="Issues Found"
             value={loading ? "..." : Number(stats?.totalIssuesFound ?? 0)}
-            icon={AlertCircle}
+            icon={<AlertCircle className="w-5 h-5" />}
             iconColor="text-yellow-400"
           />
 
           <StatsCard
             title="Avg Complexity"
             value={loading ? "..." : Number(stats?.averageComplexity ?? 0)}
-            icon={Activity}
+            icon={<Activity className="w-5 h-5" />}
             iconColor="text-purple-400"
           />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <ScoreTrendChart data={scoreTrend} loading={loading} />
+          <ScoreTrendChart
+            data={scoreTrend}
+            loading={loading}
+          />
+
           <LanguageDistributionChart
             data={languageData}
             loading={loading}

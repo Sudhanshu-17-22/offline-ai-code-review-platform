@@ -9,6 +9,12 @@ import authRoutes from "@/routes/auth.route";
 import healthRoute from "@/routes/health.route";
 import reviewRoutes from "@/routes/review.route";
 import analyticsRoutes from "./routes/analytics.routes";
+import { addRequestId } from "@/middlewares/errorHandler";
+import { globalRateLimiter } from "@/middlewares/rate.limit.middleware";
+import {
+  sanitizeBodyMiddleware,
+  sanitizeQueryMiddleware,
+} from "@/middlewares/sanitize.middleware";
 
 const app: Application = express();
 
@@ -18,9 +24,13 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "100kb" }));
+app.use(express.urlencoded({ limit: "100kb", extended: true }));
 
+app.use(addRequestId);
+app.use(globalRateLimiter(60000, 100));
+app.use(sanitizeBodyMiddleware);
+app.use(sanitizeQueryMiddleware);
 app.use(
   morgan("dev", {
     stream: {
