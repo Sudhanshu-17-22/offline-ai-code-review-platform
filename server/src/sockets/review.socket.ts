@@ -28,11 +28,9 @@ export const initReviewSocket = (io: Server) => {
         }
 
         const decoded = jwt.verify(token, env.JWT_SECRET) as {
-            id: string;
-            email: string;
+            userId: string;
         };
-        socket.userId = decoded.id;
-        socket.email = decoded.email;
+        socket.userId = decoded.userId;
         next();
         } 
         catch (error) {
@@ -51,7 +49,7 @@ export const initReviewSocket = (io: Server) => {
         const { code, language, fileName } = data;
 
         logger.info(
-            `[Socket] Review started by ${socket.email}: ${fileName || "untitled"}`
+            `[Socket] User connected: ${socket.id} (${socket.email})`
         );
 
         if (!code || code.trim().length < 10) {
@@ -123,18 +121,6 @@ export const initReviewSocket = (io: Server) => {
                 progress: 80,
             });
 
-            const aiScore = 75; 
-            const overallScore = Math.round((aiScore + staticAnalysis.score) / 2);
-
-            const review = new Review({
-                userId: socket.userId,
-                code,
-                language,
-                fileName,
-                aiFindings: aiResponse,
-                staticAnalysis,
-                overallScore,
-            });
 
             const savedReview = await review.save();
 

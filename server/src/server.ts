@@ -5,6 +5,7 @@ import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import { initReviewSocket } from "./sockets/review.socket";
 import { logger } from "./utils/logger";
+import mongoose from "mongoose";
 
 const httpServer = createServer(app);
 
@@ -27,27 +28,34 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    console.log('✅ MongoDB connected successfully');
+    logger.info('✅ MongoDB connected successfully');
 
-    httpServer.listen(env.PORT, 'localhost', () => {
-      console.log(`🚀 Server running on http://localhost:${env.PORT}`);
-      console.log(`🔌 Socket.io enabled`);
-      console.log(`🌱 Environment: ${env.PORT}`);
+    httpServer.listen(env.PORT, '0.0.0.0', () => {
+      logger.info(`🚀 Server running on http://localhost:${env.PORT}`);
+      logger.info(`🔌 Socket.io enabled`);
+      logger.info(`🌱 Environment: ${env.PORT}`);
     });
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    logger.info('❌ Failed to start server:', error);
     process.exit(1);
   }
 };
-
-process.on("SIGINT", () => {
-  console.log("🛑 Shutting down gracefully...");
-
-  httpServer.close(() => {
-    console.log("✅ Server closed");
+const shutdown = async (signal: string) => {
+  logger.info(`${signal} received. Shutting down gracefully...`);
+  httpServer.close(async () => {
+    logger.info('HTTP server closed');
+    io.close();
+    await mongoose.connection.close();
+    logger.info('MongoDB connection closed');
     process.exit(0);
   });
-});
+  setTimeout(() => {
+    logger.error('Forced shutdown due to timeout');
+    process.exit(1);
+  }, 10000);
+};
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
 
 startServer();
 

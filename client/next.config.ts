@@ -5,6 +5,7 @@ const withBundleAnalyzer = bundleAnalyzer({
     enabled: process.env.ANALYZE === "true",
   });
   const nextConfig: NextConfig = {
+  output: "standalone",
   reactStrictMode: true,
   images: {
     domains: [],

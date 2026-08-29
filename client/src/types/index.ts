@@ -81,6 +81,14 @@ export interface StaticAnalysisResult {
   metrics: CodeMetrics;
   score: number;
 }
+
+export interface AiAnalysisResult {
+  summary: string;
+  correctedCode: string;
+  overallScore: number;
+  issues: CodeIssue[];
+}
+
 export interface ReviewData {
   _id: string;
   userId: string;

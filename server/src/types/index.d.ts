@@ -1,0 +1,106 @@
+import { Document, Types } from "mongoose";
+export declare enum SupportedLanguage {
+    JAVASCRIPT = "javascript",
+    TYPESCRIPT = "typescript",
+    PYTHON = "python",
+    JAVA = "java",
+    CPP = "cpp",
+    GO = "go",
+    SQL = "sql",
+    HTML = "html",
+    CSS = "css"
+}
+export declare enum SeverityLevel {
+    CRITICAL = "critical",
+    WARNING = "warning",
+    INFO = "info"
+}
+export declare enum ReviewStatus {
+    PENDING = "pending",
+    PROCESSING = "processing",
+    COMPLETED = "completed",
+    FAILED = "failed"
+}
+export interface ICodeIssue {
+    line: number;
+    severity: SeverityLevel;
+    title: string;
+    description: string;
+    suggestion?: string;
+}
+export interface IStaticAnalysisResult {
+    complexity: number;
+    unusedVariables: string[];
+    issues: ICodeIssue[];
+}
+export interface IAiAnalysisResult {
+    summary: string;
+    issues: ICodeIssue[];
+    overallScore: number;
+}
+export interface IUser extends Document {
+    name: string;
+    email: string;
+    password: string;
+    avatar?: string;
+    authProvider: "local" | "github";
+    githubId?: string;
+    createdAt: Date;
+    updatedAt: Date;
+    comparePassword(candidatePassword: string): Promise<boolean>;
+}
+export interface IReview extends Document {
+    userId: Types.ObjectId;
+    title: string;
+    code: string;
+    language: SupportedLanguage;
+    fileName?: string;
+    staticAnalysis?: IStaticAnalysisResult;
+    aiAnalysis?: IAiAnalysisResult;
+    status: ReviewStatus;
+    executionTimeMs?: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export interface IProjectFile {
+    fileName: string;
+    content: string;
+    language: SupportedLanguage;
+}
+export interface IProject extends Document {
+    userId: Types.ObjectId;
+    name: string;
+    description?: string;
+    files: IProjectFile[];
+    createdAt: Date;
+    updatedAt: Date;
+}
+export interface StaticFinding {
+    type: "eslint" | "complexity" | "security" | "dead-code";
+    severity: "error" | "warning" | "info";
+    rule: string;
+    message: string;
+    line: number;
+    column: number;
+    fix?: {
+        range: [number, number];
+        text: string;
+    };
+}
+export interface CodeMetrics {
+    cyclomaticComplexity: number;
+    linesOfCode: number;
+    nestingDepth: number;
+    functions: {
+        name: string;
+        complexity: number;
+        lines: number;
+    }[];
+    duplicatePatterns: string[];
+}
+export interface StaticAnalysisResult {
+    findings: StaticFinding[];
+    metrics: CodeMetrics;
+    score: number;
+}
+//# sourceMappingURL=index.d.ts.map

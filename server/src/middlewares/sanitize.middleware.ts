@@ -73,7 +73,7 @@ export const sanitizeQueryMiddleware = (
   next: NextFunction
 ): void => {
   try {
-    req.query = Sanitizer.sanitizeQuery(req.query);
+    Object.assign(req.query, Sanitizer.sanitizeQuery(req.query));
     next();
   } catch (error) {
     logger.error('Query sanitization failed', {
@@ -81,7 +81,6 @@ export const sanitizeQueryMiddleware = (
       path: req.path,
       method: req.method,
     });
-
     next(error);
   }
 };

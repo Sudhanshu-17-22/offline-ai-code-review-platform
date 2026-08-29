@@ -41,6 +41,7 @@ export interface IStaticAnalysisResult {
 
 export interface IAiAnalysisResult {
   summary: string;
+  correctedCode: string;
   issues: ICodeIssue[];
   overallScore: number; 
 }
@@ -89,18 +90,19 @@ export interface IProject extends Document {
 
 // Static Analysis Types
 export interface StaticFinding {
-  type: "eslint" | "complexity" | "security" | "dead-code";
-  severity: "error" | "warning" | "info";
-  rule: string;
-  message: string;
-  line: number;
-  column: number;
-  fix?: {
-    range: [number, number];
-    text: string;
-  };
+    type: "eslint" | "complexity" | "security" | "dead-code";
+    severity: "error" | "warning" | "info";
+    rule: string;
+    message: string;
+    title: string;
+    description: string;
+    line: number;
+    column: number;
+    fix?: {
+        range: [number, number];
+        text: string;
+    };
 }
-
 export interface CodeMetrics {
   cyclomaticComplexity: number;
   linesOfCode: number;

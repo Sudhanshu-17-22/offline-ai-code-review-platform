@@ -89,10 +89,10 @@ export const useReviewSocket = (): UseReviewSocketReturn => {
     }
 
     const socket = io(
-      process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
+      process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000",
       {
         auth: { token },
-        transports: ["websocket", "polling"],
+        transports: ["polling", "websocket"],
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,

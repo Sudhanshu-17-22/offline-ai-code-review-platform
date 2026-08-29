@@ -9,7 +9,7 @@ interface CodeEditorProps {
 code: string;
 language: SupportedLanguage;
 onChange: (value: string) => void;
-onLanguageChange: (language: SupportedLanguage) => void;
+onLanguageChange?: (language: SupportedLanguage) => void;
 height?: string;
 }
 
@@ -52,7 +52,7 @@ onChange("");
 };
 
   return (
-    <div className="flex flex-col h-full rounded-xl overflow-hidden border border-border">
+    <div className="flex flex-col h-[500px] rounded-xl overflow-hidden border border-border">
       <div className="bg-slate-900/50 border-b border-slate-700 px-4 py-3 flex items-center justify-between gap-2">
         <div className="relative">
 <button
@@ -71,7 +71,7 @@ className="inline-flex items-center gap-2 px-3 py-2 rounded bg-slate-700 hover:b
               type="button"
               key={lang}
               onClick={() => {
-                onLanguageChange(lang);
+                onLanguageChange?.(lang);
                 setShowLanguageMenu(false);
               }}
               className={`block w-full text-left px-4 py-2 text-sm transition-colors ${
@@ -110,7 +110,7 @@ className="inline-flex items-center gap-2 px-3 py-2 rounded bg-slate-700 hover:b
         </div>
       </div>
 
-      <div className="flex-1 min-h-0" style={{ height }}>
+      <div className="flex-1 min-h-0 h-full">
     <Editor
       height="100%"
       language={language}

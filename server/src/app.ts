@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import morgan from "morgan";
+import helmet from "helmet";
 import { env } from "@/config/env";
 import { logger } from "@/utils/logger";
 import { errorHandler, notFoundHandler } from "@/middlewares/errorHandler";
@@ -24,9 +25,21 @@ app.use(
     credentials: true,
   })
 );
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", "data:", "https:"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  })
+);
 app.use(express.json({ limit: "100kb" }));
 app.use(express.urlencoded({ limit: "100kb", extended: true }));
-
 app.use(addRequestId);
 app.use(globalRateLimiter(60000, 100));
 app.use(sanitizeBodyMiddleware);

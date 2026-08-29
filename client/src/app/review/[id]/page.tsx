@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import fetchReviewById from "@/libraries/api";
+import { getReviewById } from "@/libraries/review";
 import type { ReviewData } from "@/types";
 import ReviewResult from "@/components/review/review.result";
 import StaticIssueCard from "@/components/review/static.issue.card";
@@ -18,8 +18,8 @@ export default function ReviewPage() {
     useEffect(() => {
         const loadReview = async () => {
             try {
-                const data = await fetchReviewById(params.id as string);
-                setReview(data.data);
+                const data = await getReviewById(params.id as string);
+                setReview(data);
             } catch {
                 setError("Failed to load review");
             } finally {
@@ -71,8 +71,9 @@ export default function ReviewPage() {
             {/* AI Findings */}
             <div className="col-span-2">
                 <ReviewResult 
-                    aiFindings={JSON.stringify(review.aiAnalysis?.issues ?? [])} 
+                    aiFindings={JSON.stringify(review.aiAnalysis?.issues ?? [])}
                     overallScore={review.aiAnalysis?.overallScore ?? 0}
+                    correctedCode={review.aiAnalysis?.correctedCode ?? ""}
                 />
             </div>
 
@@ -99,5 +100,7 @@ export default function ReviewPage() {
         </div>
     );
 }
+
+
 
 

@@ -97,6 +97,8 @@ class StaticAnalysisService {
                 severity: message.severity === 2 ? "error" : "warning",
                 rule: message.ruleId ?? "unknown",
                 message: message.message,
+                title: message.ruleId ?? "ESLint issue",
+                description: message.message,
                 line: message.line ?? 0,
                 column: message.column ?? 0,
                 ...(message.fix
@@ -125,6 +127,8 @@ class StaticAnalysisService {
             severity: "warning",
             rule: "high-cyclomatic-complexity",
             message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
+            title: "High cyclomatic complexity",
+            description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring.`,
             line: 1,
             column: 0,
         });
@@ -134,8 +138,10 @@ class StaticAnalysisService {
             warnings.push({
                 type: "complexity",
                 severity: "warning",
-                rule: "high-nesting-depth",
-                message: `High nesting depth: ${metrics.nestingDepth}. Consider extracting functions.`,
+                rule: "high-cyclomatic-complexity",
+                message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
+                title: "High cyclomatic complexity",
+                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring the code to reduce complexity.`,
                 line: 1,
                 column: 0,
             });
@@ -144,35 +150,41 @@ class StaticAnalysisService {
         for (const fn of metrics.functions) {
             if (fn.complexity > 8) {
                 warnings.push({
-                    type: "complexity",
-                    severity: "warning",
-                    rule: "function-complexity",
-                    message: `Function "${fn.name}" has high complexity (${fn.complexity}). Consider breaking it down.`,
-                    line: 1,
-                    column: 0,
-                });
+                type: "complexity",
+                severity: "warning",
+                rule: "high-cyclomatic-complexity",
+                message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
+                title: "High cyclomatic complexity",
+                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring the code to reduce complexity.`,
+                line: 1,
+                column: 0,
+            });
         }
 
             if (fn.lines > 100) {
                 warnings.push({
-                    type: "complexity",
-                    severity: "info",
-                    rule: "large-function",
-                    message: `Function "${fn.name}" is ${fn.lines} lines. Consider splitting into smaller functions.`,
-                    line: 1,
-                    column: 0,
-                });
+                type: "complexity",
+                severity: "warning",
+                rule: "high-cyclomatic-complexity",
+                message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
+                title: "High cyclomatic complexity",
+                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring the code to reduce complexity.`,
+                line: 1,
+                column: 0,
+            });
             }
         }
 
         if (metrics.duplicatePatterns.length > 0) {
             warnings.push({
-                    type: "dead-code",
-                    severity: "info",
-                    rule: "duplicate-code",
-                    message: `Found ${metrics.duplicatePatterns.length} duplicate code patterns. Consider DRY principle.`,
-                    line: 1,
-                    column: 0,
+                type: "complexity",
+                severity: "warning",
+                rule: "high-cyclomatic-complexity",
+                message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
+                title: "High cyclomatic complexity",
+                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring the code to reduce complexity.`,
+                line: 1,
+                column: 0,
             });
         }
         return warnings;

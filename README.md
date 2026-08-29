@@ -1,7 +1,6 @@
 # 🔒 Offline AI Code Review Platform
 
-![Backend CI](https://github.com/YOUR_USERNAME/offline-ai-code-review-platform/actions/workflows/backend-ci.yml/badge.svg)
-![Frontend CI](https://github.com/YOUR_USERNAME/offline-ai-code-review-platform/actions/workflows/frontend-ci.yml/badge.svg)
+![CI/CD](https://github.com/Sudhanshu-17-22/offline-ai-code-review-platform/actions/workflows/deploy.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 A privacy-first, AI-powered code review platform that runs **entirely offline** using local LLMs — no code ever leaves your machine. Built for developers and organizations who can't send proprietary code to cloud AI services due to compliance or security concerns.
@@ -68,6 +67,54 @@ cd client
 npm install
 npm run dev
 \`\`\`
+
+# Docker Setup
+Development
+docker compose up --build
+Production Simulation
+docker compose -f docker-compose.prod.yml up --build
+
+The development Docker setup includes MongoDB and connects to Ollama running on the host machine.
+
+# Environment Variables
+Backend
+
+Copy server/.env.example to server/.env and configure the required values.
+
+Frontend
+
+Copy client/.env.example to client/.env.local and configure the required values.
+
+Environment files containing secrets should not be committed to Git.
+
+# Deployment
+Live Demo
+Frontend: https://your-app.vercel.app
+Backend: https://your-app.onrender.com
+
+Note: The live demo runs in "Demo Mode" because Ollama requires local compute resources that free cloud tiers don't provide. For the full offline AI experience with real local LLM inference, please run locally following the instructions above.
+
+Run Locally (Full AI Features)
+
+For real AI-powered code reviews, install Ollama locally and run the configured model:
+
+ollama run qwen2.5-coder:7b
+
+Then start the backend and frontend using the installation instructions above.
+
+# Ollama / Demo Mode
+
+The cloud deployment can use Demo Mode to provide mock AI responses when Ollama is unavailable.
+
+For the complete privacy-first experience, run the application locally with Ollama. In local mode, code is processed by the local LLM and does not need to be sent to a cloud AI provider.
+
+# CI/CD
+
+GitHub Actions runs the backend and frontend tests and builds on pushes and pull requests targeting main.
+
+After successful checks on main, the backend deployment can be triggered through the configured Render deployment hook.
+
+Vercel can automatically deploy the frontend when changes are pushed to the connected GitHub repository.
 
 ## Testing
 

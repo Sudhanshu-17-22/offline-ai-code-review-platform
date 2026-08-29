@@ -11,6 +11,7 @@ interface IReview extends Document {
   aiFindings: string;
   aiAnalysis?: {
     summary: string;
+    correctedCode: string;
     issues: Array<{
       line: number;
       column?: number;
@@ -79,6 +80,7 @@ const staticAnalysisSchema = new Schema(
 const aiAnalysisSchema = new Schema(
   {
     summary: { type: String, default: "" },
+    correctedCode: { type: String, default: "" },
     issues: { type: [codeIssueSchema], default: [] },
     overallScore: { type: Number, min: 0, max: 100, default: 0 },
   },
@@ -145,7 +147,7 @@ const reviewSchema = new Schema<IReview>(
 reviewSchema.index({ userId: 1, createdAt: -1 });
 reviewSchema.index({ status: 1 });
 
-export const Review = model<IReview>("Review", reviewSchema);
+export const Review = mongoose.models.Review || model<IReview>("Review", reviewSchema);
 export default Review;
 
 

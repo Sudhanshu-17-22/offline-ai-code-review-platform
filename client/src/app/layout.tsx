@@ -1,40 +1,34 @@
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+﻿import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "@/components/providers";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
-});
-
 export const metadata: Metadata = {
-  title: 'Offline AI Code Review | Private & Secure',
-  description: 'Review your code offline with AI. No data leaves your machine.',
-  keywords: ['code review', 'AI', 'offline', 'privacy', 'developer tools'],
-  authors: [{ name: 'Your Name' }],
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#111827' },
-  ],
+  title: "Offline AI Code Review | Private & Secure",
+  description: "Review your code offline with AI. No data leaves your machine.",
+  keywords: ["code review", "AI", "offline", "privacy", "developer tools"],
+  authors: [{ name: "Your Name" }],
   icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: 'Offline AI Code Review',
-    description: 'Privacy-first code review platform',
-    type: 'website',
+    title: "Offline AI Code Review",
+    description: "Privacy-first code review platform",
+    type: "website",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#111827" },
+  ],
 };
 
 export default function RootLayout({
@@ -44,9 +38,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <body
-        className={`${inter.variable} ${jetbrainsMono.variable} bg-background text-white antialiased`}
-      >
+      <body className="bg-background text-white antialiased">
         <Providers>
           <Navbar />
           <main className="min-h-screen">{children}</main>
@@ -66,5 +58,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-
