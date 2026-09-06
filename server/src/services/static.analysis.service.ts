@@ -45,49 +45,60 @@ const eslint = new ESLint({
 class StaticAnalysisService {
     async analyzeCode(code: string, language: string): Promise<StaticAnalysisResult> {
         try {
-        const eslintFindings = await this.runESLint(code);
+            const isJavaScript =
+                language === "javascript" ||
+                language === "typescript";
 
-        let metrics: CodeMetrics = {
-            cyclomaticComplexity: 0,
-            linesOfCode: 0,
-            nestingDepth: 0,
-            functions: [],
-            duplicatePatterns: [],
-        };
+            let eslintFindings: StaticFinding[] = [];
 
-        if (language === "javascript" || language === "typescript") {
-            metrics = astParserService.analyzeCodeMetrics(code);
-        }
+            if (isJavaScript) {
+                eslintFindings = await this.runESLint(code, language);
+            }
 
-        const allFindings = [
-            ...eslintFindings,
-            ...this.extractComplexityWarnings(metrics),
-        ];
-        const score = this.calculateScore(allFindings, metrics);
-
-        return {
-            findings: allFindings,
-            metrics,
-            score,
-        };
-        } catch (error) {
-            console.error("Static analysis error:", error);
-        return {
-            findings: [],
-            metrics: {
+            let metrics: CodeMetrics = {
                 cyclomaticComplexity: 0,
                 linesOfCode: code.split("\n").length,
                 nestingDepth: 0,
                 functions: [],
                 duplicatePatterns: [],
-            },
-            score: 50,
-        };
+            };
+
+            if (isJavaScript) {
+                metrics = astParserService.analyzeCodeMetrics(code);
+            }
+
+            const allFindings = [
+                ...eslintFindings,
+                ...this.extractComplexityWarnings(metrics),
+            ];
+
+            const score = this.calculateScore(allFindings, metrics);
+
+            return {
+                findings: allFindings,
+                metrics,
+                score,
+            };
+        } catch (error) {
+            console.error("Static analysis error:", error);
+
+            return {
+                findings: [],
+                metrics: {
+                    cyclomaticComplexity: 0,
+                    linesOfCode: code.split("\n").length,
+                    nestingDepth: 0,
+                    functions: [],
+                    duplicatePatterns: [],
+                },
+                score: 50,
+            };
         }
     }
 
-    private async runESLint(code: string): Promise<StaticFinding[]> {
-        const results = await eslint.lintText(code);
+    private async runESLint(code: string, language: string): Promise<StaticFinding[]> {
+        const filePath = language === "typescript" ? "code.ts" : "code.js";
+        const results = await eslint.lintText(code, { filePath });
         const findings: StaticFinding[] = [];
 
         for (const result of results) {
@@ -122,26 +133,26 @@ class StaticAnalysisService {
         const warnings: StaticFinding[] = [];
 
         if (metrics.cyclomaticComplexity > 10) {
-        warnings.push({
-            type: "complexity",
-            severity: "warning",
-            rule: "high-cyclomatic-complexity",
-            message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
-            title: "High cyclomatic complexity",
-            description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring.`,
-            line: 1,
-            column: 0,
-        });
-        }
-
-        if (metrics.nestingDepth > 4) {
             warnings.push({
                 type: "complexity",
                 severity: "warning",
                 rule: "high-cyclomatic-complexity",
                 message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
                 title: "High cyclomatic complexity",
-                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring the code to reduce complexity.`,
+                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring.`,
+                line: 1,
+                column: 0,
+            });
+        }
+
+        if (metrics.nestingDepth > 4) {
+            warnings.push({
+                type: "complexity",
+                severity: "warning",
+                rule: "high-nesting-depth",
+                message: `High nesting depth: ${metrics.nestingDepth}. Consider refactoring.`,
+                title: "High nesting depth",
+                description: `Nesting depth is ${metrics.nestingDepth}. Consider refactoring the code to reduce nesting.`,
                 line: 1,
                 column: 0,
             });
@@ -150,28 +161,28 @@ class StaticAnalysisService {
         for (const fn of metrics.functions) {
             if (fn.complexity > 8) {
                 warnings.push({
-                type: "complexity",
-                severity: "warning",
-                rule: "high-cyclomatic-complexity",
-                message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
-                title: "High cyclomatic complexity",
-                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring the code to reduce complexity.`,
-                line: 1,
-                column: 0,
-            });
-        }
+                    type: "complexity",
+                    severity: "warning",
+                    rule: "high-function-complexity",
+                    message: `Function "${fn.name}" has high cyclomatic complexity: ${fn.complexity}. Consider refactoring.`,
+                    title: "High function complexity",
+                    description: `Function "${fn.name}" has cyclomatic complexity of ${fn.complexity}. Consider refactoring.`,
+                    line: 1,
+                    column: 0,
+                });
+            }
 
             if (fn.lines > 100) {
                 warnings.push({
-                type: "complexity",
-                severity: "warning",
-                rule: "high-cyclomatic-complexity",
-                message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
-                title: "High cyclomatic complexity",
-                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring the code to reduce complexity.`,
-                line: 1,
-                column: 0,
-            });
+                    type: "complexity",
+                    severity: "warning",
+                    rule: "long-function",
+                    message: `Function "${fn.name}" is ${fn.lines} lines long. Consider refactoring.`,
+                    title: "Long function",
+                    description: `Function "${fn.name}" contains ${fn.lines} lines. Consider breaking it into smaller functions.`,
+                    line: 1,
+                    column: 0,
+                });
             }
         }
 
@@ -179,14 +190,15 @@ class StaticAnalysisService {
             warnings.push({
                 type: "complexity",
                 severity: "warning",
-                rule: "high-cyclomatic-complexity",
-                message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
-                title: "High cyclomatic complexity",
-                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring the code to reduce complexity.`,
+                rule: "duplicate-code",
+                message: `Found ${metrics.duplicatePatterns.length} duplicated code pattern(s).`,
+                title: "Duplicate code",
+                description: `Found ${metrics.duplicatePatterns.length} duplicated code pattern(s). Consider refactoring.`,
                 line: 1,
                 column: 0,
             });
         }
+
         return warnings;
     }
 

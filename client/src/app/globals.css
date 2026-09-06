@@ -1,29 +1,51 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @supports not (backdrop-filter: blur(10px)) {
   .glass-effect {
-    background: rgba(255, 255, 255, 0.9);
+
+    background: rgba(13, 18, 18, 0.95);
+
+    border: 1px solid rgba(94, 234, 212, 0.24);
+
   }
 }
 
 @supports (backdrop-filter: blur(10px)) {
   .glass-effect {
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.7);
+
+    backdrop-filter: blur(16px);
+
+    background: rgba(13, 18, 18, 0.78);
+
+    border: 1px solid rgba(94, 234, 212, 0.24);
+
   }
 }
 
 html {
   scroll-behavior: smooth;
+  background: #080B0B;
 }
-
+body {
+  font-family: var(--font-inter), sans-serif;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(45, 212, 191, 0.07), transparent 30%),
+    radial-gradient(circle at 90% 10%, rgba(251, 191, 36, 0.055), transparent 30%),
+    radial-gradient(circle at 50% 100%, rgba(52, 211, 153, 0.045), transparent 35%),
+    #080B0B;
+  color: #E7E5E4;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection {
+  background: rgba(45, 212, 191, 0.3);
+  color: #FFFBEB;
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-
   *,
   *::before,
   *::after {
@@ -32,22 +54,25 @@ html {
     transition-duration: 0.01ms !important;
   }
 }
-
-*:focus { outline: none; } *:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
-
+*:focus {
+  outline: none;
+}
+*:focus-visible {
+  outline: 2px solid #5EEAD4;
+  outline-offset: 2px;
+}
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #1e1e2e;
+  background: #080B0B;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #4f46e5;
-  border-radius: 4px;
+  background: linear-gradient(180deg, #2DD4BF, #FBBF24);
+  border-radius: 999px;
+  border: 2px solid #080B0B;
 }
-
-body {
-  font-family: var(--font-inter), sans-serif;
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #5EEAD4, #FCD34D);
 }

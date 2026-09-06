@@ -94,20 +94,39 @@ const ReviewResult = memo(function ReviewResult({
 
                     <div className="overflow-x-auto bg-slate-950">
                         <pre className="p-6 text-sm leading-6 text-slate-200 font-mono">
-                            {correctedCode
-                                .replace(/\\n/g, "\n")
-                                .replace(/\\"/g, '"')
-                                .split("\n")
-                                .map((line, index) => (
-                                <div key={index} className="flex">
-                                    <span className="select-none w-12 pr-4 text-right text-slate-600">
-                                        {index + 1}
-                                    </span>
-                                    <code className="whitespace-pre">
-                                        {line || " "}
-                                    </code>
+                            {correctedCode && (
+                                <div className="bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden">
+                                    <div className="p-6 border-b border-slate-700">
+                                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                            <Code2 className="w-5 h-5 text-green-400" />
+                                            Corrected Code
+                                        </h3>
+                                    </div>
+
+                                    <div className="overflow-x-auto bg-slate-950">
+                                        <pre className="p-6 text-sm leading-6 text-slate-200 font-mono">
+                                            {correctedCode && (
+                                                <div className="bg-slate-800/50 rounded-lg border border-slate-700 overflow-hidden">
+                                                    <div className="p-6 border-b border-slate-700">
+                                                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                                            <Code2 className="w-5 h-5 text-green-400" />
+                                                            Corrected Code
+                                                        </h3>
+                                                    </div>
+
+                                                    <div className="overflow-x-auto bg-slate-950">
+                                                        <pre className="p-6 text-sm leading-6 text-slate-200 font-mono whitespace-pre">
+                                                            {correctedCode
+                                                                .replace(/\\n/g, "\n")
+                                                                .replace(/\\"/g, '"')}
+                                                        </pre>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </pre>
+                                    </div>
                                 </div>
-                            ))}
+                            )}
                         </pre>
                     </div>
                 </div>

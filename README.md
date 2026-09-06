@@ -1,134 +1,158 @@
-# 🔒 Offline AI Code Review Platform
+# Offline AI Code Review Platform
+A privacy-first code review platform that analyzes code locally using AI and static analysis — without sending source code to external AI services.**
 
-![CI/CD](https://github.com/Sudhanshu-17-22/offline-ai-code-review-platform/actions/workflows/deploy.yml/badge.svg)
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-A privacy-first, AI-powered code review platform that runs **entirely offline** using local LLMs — no code ever leaves your machine. Built for developers and organizations who can't send proprietary code to cloud AI services due to compliance or security concerns.
+## Why This Project?
+Most AI code review tools require developers to send their source code to third-party cloud services. That can be a problem when working with private repositories, proprietary code, or sensitive projects.
+I built this platform to solve that problem by combining **local AI-powered code review with static analysis**, allowing developers to review code while keeping their source code on their own machine.
 
-## 🎯 Problem Statement
 
-Most AI code review tools (like GitHub Copilot or cloud-based linters) send your code to external servers. This is a dealbreaker for:
-- Companies with strict data compliance (HIPAA, SOC2, GDPR)
-- Developers working on proprietary/sensitive codebases
-- Teams without reliable internet access
+## Features
+* 🤖 **Offline AI Code Review** — powered by Ollama
+* 🔍 **Static Analysis** — detects common code issues
+* 🌳 **AST-based Analysis** — deeper structural code inspection
+* ⚡ **Real-time Streaming** — review results streamed using Socket.io
+* 📝 **Monaco Code Editor** — write and review code directly in the browser
+* 📊 **Analytics Dashboard** — track scores, languages, and review trends
+* 📚 **Review History** — search and filter previous reviews
+* 🔐 **JWT Authentication** — secure user authentication
+* 🐳 **Docker Support** — containerized frontend and backend
 
-This platform solves that by running the entire AI review pipeline **locally** using Ollama-hosted open-source LLMs, combined with deterministic static analysis (AST parsing + ESLint rules).
 
-## ⚙️ Tech Stack
+## Tech Stack
+** Frontend **
+- Next.js 
+- React 
+- TypeScript 
+- Tailwind CSS 
+- Monaco Editor 
+- Zustand 
+- Recharts
 
-**Frontend:** Next.js 14, TypeScript, Tailwind CSS, Monaco Editor, Zustand
-**Backend:** Node.js, Express.js, TypeScript, MongoDB, Mongoose, Socket.io
-**AI Layer:** Ollama (local LLM runtime) + DeepSeek-Coder / Qwen2.5-Coder
-**Static Analysis:** ESLint (rule engine), Tree-sitter (AST parsing)
-**Auth:** JWT, bcrypt
-**Testing:** Jest, Supertest
+** Backend **
+- Node.js 
+- Express.js 
+- TypeScript
+- Socket.io 
+- JWT
+- Zod
 
-## ✨ Core Features
+** AI & Code Analysis **
+- Ollama 
+- Qwen2.5-Coder 
+- Tree-sitter 
+- AST-based Static Analysis
 
-- 100% offline AI-powered code review
-- Real-time streaming analysis (WebSockets)
-- Static analysis: complexity, unused vars, code smells
-- Monaco-based code editor (same as VS Code)
-- Review history & dashboard analytics
-- Severity-tagged issues with suggested fixes
+** Database & Testing **
+- MongoDB 
+- Mongoose 
+- Jest 
+- Supertest
 
-## 🌐 Language Support
+** DevOps & Tools **
+- Docker 
+- Docker Compose 
+- Git 
+- GitHub 
+- VS Code
 
-| Tier | Languages | Analysis Depth |
-|---|---|---|
-| Full Support | JavaScript, TypeScript | AI + AST + ESLint |
-| AI-Only Support | Python, Java, C++, Go, SQL, HTML/CSS | AI review only |
 
-## 📁 Project Structure
+## Architecture
+Browser
+   │
+   ▼
+Next.js Frontend
+   │
+   ▼
+Express API ───────► MongoDB
+   │
+   ├───────────────► Static Analysis
+   │
+   └───────────────► Ollama
+                         │
+                         ▼
+                    Local AI Model
+                         │
+                         ▼
+                  Review + Analysis
+                         │
+                         ▼
+                   Socket.io Stream
 
-See `docs/architecture.md` for full system design details.
+The application keeps the AI processing local through Ollama, reducing dependency on external AI APIs and keeping source code within the local environment.
 
-## 🚀 Getting Started
 
-### Prerequisites
-- Node.js (v18+)
-- MongoDB (local or Atlas)
-- Ollama installed locally
+## Getting Started
+* Prerequisites *
+- Node.js
+- MongoDB
+- Ollama
+- Git
 
-### Installation
 
-\`\`\`bash
-# Clone repo
-git clone <your-repo-url>
+### Clone
+git clone https://github.com/your-username/offline-ai-code-review-platform.git
 cd offline-ai-code-review-platform
 
-# Setup backend
+
+### Install dependencies
 cd server
 npm install
-npm run dev
 
-# Setup frontend (in a new terminal)
-cd client
+cd ../client
 npm install
+
+
+### Configure environment variables
+Create `.env` files using the environment variables required by the server and client configuration.
+
+
+### Start Ollama
+* Pull the required mode *
+- ollama pull qwen2.5-coder:7b
+
+
+### Run the application
+Start the backend:
+cd server
 npm run dev
-\`\`\`
 
-# Docker Setup
-Development
-docker compose up --build
-Production Simulation
-docker compose -f docker-compose.prod.yml up --build
+Start the frontend in another terminal:
+cd client
+npm run dev
 
-The development Docker setup includes MongoDB and connects to Ollama running on the host machine.
+Open:
+http://localhost:3000
 
-# Environment Variables
-Backend
 
-Copy server/.env.example to server/.env and configure the required values.
+## Project Structure
+offline-ai-code-review-platform/
+├── client/          # Next.js frontend
+├── server/          # Express backend
+├── docs/             # Project documentation
+├── docker-compose.yml
+└── README.md
 
-Frontend
 
-Copy client/.env.example to client/.env.local and configure the required values.
+## What I Learned
 
-Environment files containing secrets should not be committed to Git.
+Building this project helped me work through real full-stack problems rather than only implementing individual features. I worked with authentication, API design, MongoDB, local LLM integration, AST-based analysis, real-time streaming, testing, Docker, and frontend state management.
+The main takeaway was learning how to **break a problem into smaller systems, debug them independently, and integrate them into one working application.**
 
-# Deployment
-Live Demo
-Frontend: https://your-app.vercel.app
-Backend: https://your-app.onrender.com
 
-Note: The live demo runs in "Demo Mode" because Ollama requires local compute resources that free cloud tiers don't provide. For the full offline AI experience with real local LLM inference, please run locally following the instructions above.
+## Future Improvements
+- Support additional local AI models
+- Improve static analysis rules
+- Add pull-request integration
+- Add more programming language support
+- Improve review performance for large codebases
 
-Run Locally (Full AI Features)
 
-For real AI-powered code reviews, install Ollama locally and run the configured model:
+## License
+This project is licensed under the MIT License.
 
-ollama run qwen2.5-coder:7b
 
-Then start the backend and frontend using the installation instructions above.
-
-# Ollama / Demo Mode
-
-The cloud deployment can use Demo Mode to provide mock AI responses when Ollama is unavailable.
-
-For the complete privacy-first experience, run the application locally with Ollama. In local mode, code is processed by the local LLM and does not need to be sent to a cloud AI provider.
-
-# CI/CD
-
-GitHub Actions runs the backend and frontend tests and builds on pushes and pull requests targeting main.
-
-After successful checks on main, the backend deployment can be triggered through the configured Render deployment hook.
-
-Vercel can automatically deploy the frontend when changes are pushed to the connected GitHub repository.
-
-## Testing
-
-This project maintains >70% code coverage with comprehensive unit and integration tests.
-
-```bash
-# Run all tests
-npm run test:all
-
-# Run with coverage
-npm run coverage:all
-
-## 📄 License
-MIT
-
-## 👤 Author
-[Sudhanshu Roy]
+## Connect
+** Sudhanshu Roy **
+- LinkedIn: [https://www.linkedin.com/in/sudhanshu-roy-1492682b1]
+- GitHub: [https://github.com/Sudhanshu-17-22]

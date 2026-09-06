@@ -14,6 +14,7 @@ export enum SupportedLanguage {
 
 export enum SeverityLevel {
   CRITICAL = "critical",
+  ERROR = "error",
   WARNING = "warning",
   INFO = "info",
 }

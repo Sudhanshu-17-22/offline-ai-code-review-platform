@@ -4,9 +4,12 @@ import bundleAnalyzer from "@next/bundle-analyzer";
 const withBundleAnalyzer = bundleAnalyzer({
     enabled: process.env.ANALYZE === "true",
   });
-  const nextConfig: NextConfig = {
+const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
+  turbopack: { 
+    root: __dirname,
+  },
   images: {
     domains: [],
     formats: ["image/avif", "image/webp"],

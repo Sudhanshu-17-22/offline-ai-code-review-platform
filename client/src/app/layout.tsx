@@ -1,4 +1,4 @@
-﻿import type { Metadata, Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -20,17 +20,15 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
-
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#111827" },
+    { media: "(prefers-color-scheme: light)", color: "#F5F5F0" },
+    { media: "(prefers-color-scheme: dark)", color: "#080B0B" },
   ],
 };
-
 export default function RootLayout({
   children,
 }: {
@@ -38,18 +36,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
-      <body className="bg-background text-white antialiased">
+      <body className="bg-[#080B0B] text-[#E7E5E4] antialiased">
         <Providers>
           <Navbar />
-          <main className="min-h-screen">{children}</main>
+          <main className="min-h-screen relative overflow-hidden">{children}</main>
           <Footer />
           <Toaster
             position="top-right"
             toastOptions={{
               style: {
-                background: "#1e1e2e",
-                color: "#fff",
-                border: "1px solid #2a2a3c",
+                background: "#0D1212",
+                color: "#E7E5E4",
+                border: "1px solid rgba(94, 234, 212, 0.24)",
               },
             }}
           />

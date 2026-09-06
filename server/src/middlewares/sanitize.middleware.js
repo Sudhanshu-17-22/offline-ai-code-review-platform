@@ -52,7 +52,7 @@ const sanitizeBodyMiddleware = (req, res, next) => {
 exports.sanitizeBodyMiddleware = sanitizeBodyMiddleware;
 const sanitizeQueryMiddleware = (req, res, next) => {
     try {
-        req.query = sanitizer_1.Sanitizer.sanitizeQuery(req.query);
+        Object.assign(req.query, sanitizer_1.Sanitizer.sanitizeQuery(req.query));
         next();
     }
     catch (error) {

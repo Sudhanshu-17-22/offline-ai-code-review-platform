@@ -46,15 +46,20 @@ const eslint = new eslint_1.ESLint({
 class StaticAnalysisService {
     async analyzeCode(code, language) {
         try {
-            const eslintFindings = await this.runESLint(code);
+            const isJavaScript = language === "javascript" ||
+                language === "typescript";
+            let eslintFindings = [];
+            if (isJavaScript) {
+                eslintFindings = await this.runESLint(code, language);
+            }
             let metrics = {
                 cyclomaticComplexity: 0,
-                linesOfCode: 0,
+                linesOfCode: code.split("\n").length,
                 nestingDepth: 0,
                 functions: [],
                 duplicatePatterns: [],
             };
-            if (language === "javascript" || language === "typescript") {
+            if (isJavaScript) {
                 metrics = ast_parser_service_1.default.analyzeCodeMetrics(code);
             }
             const allFindings = [
@@ -83,8 +88,9 @@ class StaticAnalysisService {
             };
         }
     }
-    async runESLint(code) {
-        const results = await eslint.lintText(code);
+    async runESLint(code, language) {
+        const filePath = language === "typescript" ? "code.ts" : "code.js";
+        const results = await eslint.lintText(code, { filePath });
         const findings = [];
         for (const result of results) {
             for (const message of result.messages) {
@@ -93,6 +99,8 @@ class StaticAnalysisService {
                     severity: message.severity === 2 ? "error" : "warning",
                     rule: message.ruleId ?? "unknown",
                     message: message.message,
+                    title: message.ruleId ?? "ESLint issue",
+                    description: message.message,
                     line: message.line ?? 0,
                     column: message.column ?? 0,
                     ...(message.fix
@@ -119,6 +127,8 @@ class StaticAnalysisService {
                 severity: "warning",
                 rule: "high-cyclomatic-complexity",
                 message: `High cyclomatic complexity: ${metrics.cyclomaticComplexity}. Consider refactoring.`,
+                title: "High cyclomatic complexity",
+                description: `Cyclomatic complexity is ${metrics.cyclomaticComplexity}. Consider refactoring.`,
                 line: 1,
                 column: 0,
             });
@@ -128,7 +138,9 @@ class StaticAnalysisService {
                 type: "complexity",
                 severity: "warning",
                 rule: "high-nesting-depth",
-                message: `High nesting depth: ${metrics.nestingDepth}. Consider extracting functions.`,
+                message: `High nesting depth: ${metrics.nestingDepth}. Consider refactoring.`,
+                title: "High nesting depth",
+                description: `Nesting depth is ${metrics.nestingDepth}. Consider refactoring the code to reduce nesting.`,
                 line: 1,
                 column: 0,
             });
@@ -138,8 +150,10 @@ class StaticAnalysisService {
                 warnings.push({
                     type: "complexity",
                     severity: "warning",
-                    rule: "function-complexity",
-                    message: `Function "${fn.name}" has high complexity (${fn.complexity}). Consider breaking it down.`,
+                    rule: "high-function-complexity",
+                    message: `Function "${fn.name}" has high cyclomatic complexity: ${fn.complexity}. Consider refactoring.`,
+                    title: "High function complexity",
+                    description: `Function "${fn.name}" has cyclomatic complexity of ${fn.complexity}. Consider refactoring.`,
                     line: 1,
                     column: 0,
                 });
@@ -147,9 +161,11 @@ class StaticAnalysisService {
             if (fn.lines > 100) {
                 warnings.push({
                     type: "complexity",
-                    severity: "info",
-                    rule: "large-function",
-                    message: `Function "${fn.name}" is ${fn.lines} lines. Consider splitting into smaller functions.`,
+                    severity: "warning",
+                    rule: "long-function",
+                    message: `Function "${fn.name}" is ${fn.lines} lines long. Consider refactoring.`,
+                    title: "Long function",
+                    description: `Function "${fn.name}" contains ${fn.lines} lines. Consider breaking it into smaller functions.`,
                     line: 1,
                     column: 0,
                 });
@@ -157,10 +173,12 @@ class StaticAnalysisService {
         }
         if (metrics.duplicatePatterns.length > 0) {
             warnings.push({
-                type: "dead-code",
-                severity: "info",
+                type: "complexity",
+                severity: "warning",
                 rule: "duplicate-code",
-                message: `Found ${metrics.duplicatePatterns.length} duplicate code patterns. Consider DRY principle.`,
+                message: `Found ${metrics.duplicatePatterns.length} duplicated code pattern(s).`,
+                title: "Duplicate code",
+                description: `Found ${metrics.duplicatePatterns.length} duplicated code pattern(s). Consider refactoring.`,
                 line: 1,
                 column: 0,
             });

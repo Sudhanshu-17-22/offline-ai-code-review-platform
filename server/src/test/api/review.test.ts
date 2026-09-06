@@ -10,9 +10,10 @@ import staticAnalysisService from "../../services/static.analysis.service";
 jest.setTimeout(30000);
 
 jest.spyOn(aiService, "reviewCode").mockResolvedValue({
-    summary: "Code review completed",
-    issues: [],
-    overallScore: 90,
+  summary: "Code review completed",
+  correctedCode: "",
+  issues: [],
+  overallScore: 90,
 });
 
 jest.spyOn(staticAnalysisService, "analyzeCode").mockResolvedValue({

@@ -14,6 +14,7 @@ const static_analysis_service_1 = __importDefault(require("../../services/static
 jest.setTimeout(30000);
 jest.spyOn(ai_service_1.aiService, "reviewCode").mockResolvedValue({
     summary: "Code review completed",
+    correctedCode: "",
     issues: [],
     overallScore: 90,
 });

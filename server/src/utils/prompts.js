@@ -29,13 +29,17 @@ Respond ONLY with valid JSON in this EXACT structure, with no extra text before 
       "description": "Clear explanation of what's wrong and why it matters",
       "suggestion": "A specific code-level suggestion to fix it"
     }
-  ]
+  ],
+  "correctedCode": "The complete corrected ${language} code. Fix all identified issues while preserving the original functionality."
 }
 
 Rules:
-- If the code has no issues, return an empty "issues" array but still provide a summary and score.
+- If the code has no issues, return an empty "issues" array and return the original code unchanged in "correctedCode".
+- If the code has issues, "correctedCode" must contain the complete corrected version of the submitted code.
 - Be specific — reference actual variable/function names from the code.
-- Do not include markdown formatting, backticks, or explanations outside the JSON.`;
+- Do not include markdown formatting, backticks, or explanations outside the JSON.
+- The "correctedCode" value must contain only the corrected source code.
+- Do not omit any part of the original code from "correctedCode".`;
 };
 exports.buildCodeReviewPrompt = buildCodeReviewPrompt;
 const buildQuickCheckPrompt = (code, language) => {

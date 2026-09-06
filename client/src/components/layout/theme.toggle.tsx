@@ -9,18 +9,16 @@ export const ThemeToggle = () => {
     return (
         <button
             onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
-            className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+            className="p-2.5 rounded-lg border border-[#1F2B2A] bg-[#121918] hover:bg-[#1A2524] transition-all duration-200"
             aria-label="Toggle dark mode"
             title={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
         >
             {resolvedTheme === 'dark' ? (
-                <Sun size={20} className="text-yellow-400" />
+                <Sun size={18} className="text-[#FCD34D]" />
             ) : (
-                <Moon size={20} className="text-gray-600" />
+                <Moon size={18} className="text-[#64748B]" />
             )}
         </button>
     );
 };
-
-
 

@@ -1,8 +1,8 @@
-import mongoose, { Schema, model, Document } from "mongoose";
+﻿import mongoose, { Schema, model } from "mongoose";
 import { SupportedLanguage, ReviewStatus, SeverityLevel } from "@/types";
 import { StaticAnalysisResult } from "../types";
 
-interface IReview extends Document {
+interface IReview {
   userId: mongoose.Types.ObjectId;
   title: string;
   code: string;
@@ -37,15 +37,19 @@ const codeIssueSchema = new Schema(
   {
     line: { type: Number, required: true },
     column: { type: Number },
-    severity: { type: String, enum: Object.values(SeverityLevel), required: true },
+    severity: {
+      type: String,
+      enum: Object.values(SeverityLevel),
+      required: true,
+    },
     title: { type: String, required: true },
     description: { type: String, required: true },
     suggestion: { type: String },
     rule: { type: String },
     type: { type: String },
-    message: { type: String ,},
+    message: { type: String },
   },
-  { _id: false } 
+  { _id: false }
 );
 
 const staticAnalysisSchema = new Schema(
@@ -73,7 +77,7 @@ const staticAnalysisSchema = new Schema(
       max: 100,
       default: 0,
     },
-  }, 
+  },
   { _id: false }
 );
 
@@ -147,7 +151,10 @@ const reviewSchema = new Schema<IReview>(
 reviewSchema.index({ userId: 1, createdAt: -1 });
 reviewSchema.index({ status: 1 });
 
-export const Review = mongoose.models.Review || model<IReview>("Review", reviewSchema);
+export const Review =
+  (mongoose.models.Review as mongoose.Model<IReview>) ||
+  model<IReview>("Review", reviewSchema);
+
 export default Review;
 
 

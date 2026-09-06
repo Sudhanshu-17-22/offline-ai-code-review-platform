@@ -10,6 +10,7 @@ const static_analysis_service_1 = __importDefault(require("../services/static.an
 const review_model_1 = __importDefault(require("../models/review.model"));
 const env_1 = require("../config/env");
 const logger_1 = require("../utils/logger");
+const types_1 = require("../types");
 const initReviewSocket = (io) => {
     io.use((socket, next) => {
         try {
@@ -18,8 +19,7 @@ const initReviewSocket = (io) => {
                 return next(new Error("Authentication token required"));
             }
             const decoded = jsonwebtoken_1.default.verify(token, env_1.env.JWT_SECRET);
-            socket.userId = decoded.id;
-            socket.email = decoded.email;
+            socket.userId = decoded.userId;
             next();
         }
         catch (error) {
@@ -31,7 +31,6 @@ const initReviewSocket = (io) => {
         logger_1.logger.info(`[Socket] User connected: ${socket.id} (${socket.email})`);
         socket.on("review:start", async (data) => {
             const { code, language, fileName } = data;
-            logger_1.logger.info(`[Socket] Review started by ${socket.email}: ${fileName || "untitled"}`);
             if (!code || code.trim().length < 10) {
                 socket.emit("review:error", {
                     message: "Code must be at least 10 characters",
@@ -39,9 +38,18 @@ const initReviewSocket = (io) => {
                 return;
             }
             if (!language) {
-                socket.emit("review:error", { message: "Language is required" });
+                socket.emit("review:error", {
+                    message: "Language is required",
+                });
                 return;
             }
+            if (!socket.userId) {
+                socket.emit("review:error", {
+                    message: "Authentication required",
+                });
+                return;
+            }
+            const startTime = Date.now();
             try {
                 socket.emit("review:status", {
                     status: "analyzing",
@@ -59,43 +67,63 @@ const initReviewSocket = (io) => {
                     message: "AI is analyzing your code...",
                     progress: 50,
                 });
-                let fullAiResponse = "";
                 let chunkCount = 0;
                 const aiResponse = await ollama_service_1.ollamaService.reviewCodeStream(code, language, (chunk) => {
-                    fullAiResponse += chunk;
                     chunkCount++;
                     socket.emit("review:chunk", {
                         chunk,
                         chunkCount,
-                        progress: 40 + Math.min(chunkCount * 0.5, 30), // Progress up to 70%
+                        progress: 40 + Math.min(chunkCount * 0.5, 30),
                     });
                 });
                 logger_1.logger.info(`[Socket] AI streaming complete: ${chunkCount} chunks for ${socket.email}`);
+                let aiAnalysis;
+                try {
+                    const cleanedResponse = aiResponse
+                        .replace(/^```json\s*/i, "")
+                        .replace(/^```\s*/i, "")
+                        .replace(/\s*```$/i, "")
+                        .trim();
+                    aiAnalysis = JSON.parse(cleanedResponse);
+                }
+                catch (parseError) {
+                    logger_1.logger.error(`[Socket] Failed to parse AI response: ${parseError.message}`);
+                    throw new Error("AI returned an invalid review response");
+                }
+                const aiScore = Math.max(0, Math.min(100, Number(aiAnalysis.overallScore) || 0));
+                const overallScore = Math.round((aiScore + staticAnalysis.score) / 2);
                 socket.emit("review:status", {
                     status: "saving",
                     message: "Finalizing review...",
                     progress: 80,
                 });
-                const aiScore = 75;
-                const overallScore = Math.round((aiScore + staticAnalysis.score) / 2);
                 const review = new review_model_1.default({
                     userId: socket.userId,
+                    title: fileName || "Untitled Review",
                     code,
                     language,
-                    fileName,
-                    aiFindings: aiResponse,
+                    fileName: fileName || "",
+                    aiFindings: JSON.stringify(aiAnalysis.issues || []),
+                    aiAnalysis: {
+                        summary: aiAnalysis.summary || "",
+                        correctedCode: aiAnalysis.correctedCode || "",
+                        issues: aiAnalysis.issues || [],
+                        overallScore: aiScore,
+                    },
                     staticAnalysis,
                     overallScore,
+                    status: types_1.ReviewStatus.COMPLETED,
+                    executionTimeMs: Date.now() - startTime,
                 });
                 const savedReview = await review.save();
                 logger_1.logger.info(`[Socket] Review saved: ${savedReview._id} for ${socket.email}`);
                 socket.emit("review:complete", {
-                    reviewId: savedReview._id,
+                    reviewId: savedReview._id.toString(),
                     overallScore,
                     staticScore: staticAnalysis.score,
                     aiScore,
                     progress: 100,
-                    message: "✓ Review completed successfully",
+                    message: "Review completed successfully",
                 });
                 socket.emit("review:status", {
                     status: "complete",
@@ -110,7 +138,7 @@ const initReviewSocket = (io) => {
                 });
                 socket.emit("review:status", {
                     status: "error",
-                    message: error.message,
+                    message: error.message || "Review failed",
                     progress: 0,
                 });
             }

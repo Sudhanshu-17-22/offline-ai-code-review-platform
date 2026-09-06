@@ -1,7 +1,7 @@
-import mongoose, { Document } from "mongoose";
+import mongoose from "mongoose";
 import { ReviewStatus, SeverityLevel } from "@/types";
 import { StaticAnalysisResult } from "../types";
-interface IReview extends Document {
+interface IReview {
     userId: mongoose.Types.ObjectId;
     title: string;
     code: string;
@@ -10,6 +10,7 @@ interface IReview extends Document {
     aiFindings: string;
     aiAnalysis?: {
         summary: string;
+        correctedCode: string;
         issues: Array<{
             line: number;
             column?: number;
@@ -30,9 +31,9 @@ interface IReview extends Document {
     createdAt: Date;
     updatedAt: Date;
 }
-export declare const Review: mongoose.Model<IReview, {}, {}, {}, mongoose.Document<unknown, {}, IReview, {}, mongoose.DefaultSchemaOptions> & IReview & Required<{
+export declare const Review: mongoose.Model<IReview, {}, {}, {}, mongoose.Document<unknown, {}, IReview, {}, mongoose.DefaultSchemaOptions> & IReview & {
     _id: mongoose.Types.ObjectId;
-}> & {
+} & {
     __v: number;
 } & {
     id: string;

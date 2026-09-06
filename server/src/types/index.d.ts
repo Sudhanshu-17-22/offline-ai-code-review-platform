@@ -12,6 +12,7 @@ export declare enum SupportedLanguage {
 }
 export declare enum SeverityLevel {
     CRITICAL = "critical",
+    ERROR = "error",
     WARNING = "warning",
     INFO = "info"
 }
@@ -35,6 +36,7 @@ export interface IStaticAnalysisResult {
 }
 export interface IAiAnalysisResult {
     summary: string;
+    correctedCode: string;
     issues: ICodeIssue[];
     overallScore: number;
 }
@@ -80,6 +82,8 @@ export interface StaticFinding {
     severity: "error" | "warning" | "info";
     rule: string;
     message: string;
+    title: string;
+    description: string;
     line: number;
     column: number;
     fix?: {

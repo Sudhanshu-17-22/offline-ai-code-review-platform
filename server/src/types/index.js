@@ -16,6 +16,7 @@ var SupportedLanguage;
 var SeverityLevel;
 (function (SeverityLevel) {
     SeverityLevel["CRITICAL"] = "critical";
+    SeverityLevel["ERROR"] = "error";
     SeverityLevel["WARNING"] = "warning";
     SeverityLevel["INFO"] = "info";
 })(SeverityLevel || (exports.SeverityLevel = SeverityLevel = {}));
